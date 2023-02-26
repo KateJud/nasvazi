@@ -10,6 +10,8 @@ plugins {
 group = "ru.hse.group_project"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17
+
 
 configurations {
     compileOnly {
