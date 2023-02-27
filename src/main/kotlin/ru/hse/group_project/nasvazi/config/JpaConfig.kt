@@ -28,7 +28,7 @@ open class JpaConfig(private val jpaProperties: JpaProperties) {
             "ru.yandex.market.wrap.eda.model.entity",
         )
         factory.persistenceProvider = HibernatePersistenceProvider()
-        factory.jpaPropertyMap = jpaProperties.properties as Map<String, Any>
+        //factory.jpaPropertyMap = jpaProperties.properties as Map<String, Any>
         factory.afterPropertiesSet()
         return factory
     }

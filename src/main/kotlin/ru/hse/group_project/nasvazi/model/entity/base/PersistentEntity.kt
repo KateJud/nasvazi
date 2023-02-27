@@ -3,7 +3,7 @@ package ru.hse.group_project.nasvazi.model.entity.base
 import jakarta.persistence.Column
 import jakarta.persistence.MappedSuperclass
 import org.hibernate.annotations.CreationTimestamp
-import ru.hse.group_project.nasvazi.model.entity.BaseEntity
+import ru.hse.group_project.nasvazi.model.entity.base.BaseEntity
 import java.time.LocalDateTime
 
 @MappedSuperclass
