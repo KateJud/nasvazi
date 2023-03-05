@@ -36,7 +36,7 @@ dependencies {
     implementation("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final")
     implementation("org.hibernate:hibernate-entitymanager:5.4.10.Final")
     implementation("org.springframework.data:spring-data-jpa:1.11.22.RELEASE")
-//    implementation("org.springframework.data:spring-data-commons-core:1.4.0.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")

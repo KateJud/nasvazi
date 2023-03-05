@@ -1,8 +1,10 @@
 package ru.hse.group_project.nasvazi.config
 
-import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration
+import org.springframework.security.core.context.SecurityContextHolder
 
-@Configuration
-open class SecurityConfig : GlobalMethodSecurityConfiguration() {
-}
+// @Configuration
+// open class SecurityConfig : GlobalMethodSecurityConfiguration() {
+// }
+
+val currentUser: String
+    get() = (SecurityContextHolder.getContext()?.authentication?.principal as String?) ?: "TEST"

@@ -11,7 +11,8 @@ import org.hibernate.annotations.Parameter
 
 @Entity
 @Table(name = "role")
-class RoleEntity:UpdatablePersistentEntity() {
+class RoleEntity
+{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_sequence_generator")
     @GenericGenerator(

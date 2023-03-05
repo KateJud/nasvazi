@@ -1,7 +1,8 @@
 package ru.hse.group_project.nasvazi.service
 
 import org.springframework.stereotype.Service
-import ru.hse.group_project.nasvazi.repository.BookingRepository
+import org.springframework.transaction.annotation.Transactional
+import ru.hse.group_project.nasvazi.model.entity.UserEntity
 import ru.hse.group_project.nasvazi.repository.UserRepository
 
 /**
@@ -11,4 +12,11 @@ import ru.hse.group_project.nasvazi.repository.UserRepository
 class UserService(
     private val userRepository: UserRepository,
 ) {
+    @Transactional
+    fun getOrCreate(phone: String): UserEntity {
+        val user = UserEntity(
+            phone = phone
+        )
+        return userRepository.get(phone) ?: userRepository.insert(user)
+    }
 }

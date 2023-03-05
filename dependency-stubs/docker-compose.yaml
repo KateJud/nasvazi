@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  nasvazi-db:
+    container_name: nasvazi-db
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=nasvazi
+      - POSTGRES_USER=nasvazi
+      - POSTGRES_DB=nasvazi
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
