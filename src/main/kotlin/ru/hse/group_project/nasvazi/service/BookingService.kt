@@ -2,6 +2,7 @@ package ru.hse.group_project.nasvazi.service
 
 import org.springframework.stereotype.Service
 import ru.hse.group_project.nasvazi.model.entity.BookingEntity
+import ru.hse.group_project.nasvazi.model.enums.BookingStatus
 import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
 import ru.hse.group_project.nasvazi.repository.BookingRepository
 
@@ -32,9 +33,9 @@ class BookingService(
             participants = request.participants
         )
 
-
         return bookingRepository.insert(booking)
     }
+
     // todo
     // форма:
     // имя String
@@ -42,5 +43,11 @@ class BookingService(
     // столик Long (id ?)
     // время (? диапазон)
     // коммент  String - необязательное поле
+    fun cancel(phone: String) {
+        bookingRepository.updateStatus(phone, BookingStatus.CANCELLED)
+    }
 
+    fun confirm(phone: String) {
+        bookingRepository.updateStatus(phone, BookingStatus.CONFIRMED)
+    }
 }

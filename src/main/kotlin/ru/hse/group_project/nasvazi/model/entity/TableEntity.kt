@@ -6,8 +6,8 @@ data class TableEntity(
 
     // unique
     // @Column(name = "name")
-    var name: String? = null,
+    var name: String,
 
     // @Column(name = "capacity")
-    var capacity: Long? = null,
-    )
+    var capacity: Long,
+)

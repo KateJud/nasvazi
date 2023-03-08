@@ -9,16 +9,22 @@ import javax.sql.DataSource
 @Repository
 class TableRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate,
-    dataSource: DataSource
 ) {
     fun get(name: String): TableEntity {
         val params = mapOf(
             "name" to name,
         )
-        return jdbcTemplate.query(SELECT_TABLE_BY_NAME, params, userRowMapper).first()
+        return jdbcTemplate.query(SELECT_TABLE_BY_NAME, params, tableRowMapper).first()
     }
 
-    private val userRowMapper = RowMapper { rs, _ ->
+    fun get(id: Long): TableEntity {
+        val params = mapOf(
+            "id" to id,
+        )
+        return jdbcTemplate.query(SELECT_TABLE_BY_ID, params, tableRowMapper).first()
+    }
+
+    private val tableRowMapper = RowMapper { rs, _ ->
         TableEntity(
             id = rs.getLong("id"),
             name = rs.getString("name"),
@@ -28,5 +34,9 @@ class TableRepository(
 }
 
 private const val SELECT_TABLE_BY_NAME = """
- select * from table where name=:name limit 1
+ select * from table_ where name=:name limit 1
+"""
+
+private const val SELECT_TABLE_BY_ID = """
+ select * from table_ where id=:id
 """
