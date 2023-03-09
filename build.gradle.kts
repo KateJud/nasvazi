@@ -58,6 +58,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 }
+
+configurations.implementation {
+    exclude(group = "org.springframework.data", module = "spring-data-commons")
+}
 tasks.bootJar {
     archiveClassifier.set("boot")
 // manifest{
