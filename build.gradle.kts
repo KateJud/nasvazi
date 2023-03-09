@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.0.1"
     id("io.spring.dependency-management") version "1.1.0"
-    java
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
 }
@@ -24,10 +23,8 @@ repositories {
     mavenCentral()
 }
 
-tasks.jar {
-    manifest {
-        attributes["Main-Class"] = "ru.hse.group_project.nasvazi.NasvaziApplication"
-    }
+springBoot {
+    mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplication")
 }
 
 dependencies {
