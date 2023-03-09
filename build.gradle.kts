@@ -1,5 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    }
+}
+
 plugins {
     id("org.springframework.boot") version "3.0.1"
     id("io.spring.dependency-management") version "1.1.0"
@@ -23,9 +32,9 @@ repositories {
     mavenCentral()
 }
 
-//springBoot {
-//    mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplicationKt")
-//}
+springBoot {
+    mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplicationKt")
+}
 
 
 dependencies {
