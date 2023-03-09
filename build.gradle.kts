@@ -32,9 +32,9 @@ repositories {
     mavenCentral()
 }
 
-springBoot {
-    mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplicationKt")
-}
+//springBoot {
+//    mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplicationKt")
+//}
 
 
 dependencies {
@@ -58,7 +58,15 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 }
-
+tasks.bootJar {
+    archiveClassifier.set("boot")
+// manifest{
+// attributes["Main-Class"]="ru.hse.group_project.nasvazi.NasvaziApplication"
+// }
+}
+tasks.jar {
+    archiveClassifier.set("")
+}
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
