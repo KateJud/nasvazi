@@ -46,7 +46,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.hibernate:hibernate-core:6.1.7.Final")
-    implementation("com.vladmihalcea:hibernate-types-52:2.20.0")
+    implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
     implementation("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final")
     implementation("org.hibernate:hibernate-entitymanager:5.4.10.Final")
     implementation("org.springframework.data:spring-data-jpa:1.11.22.RELEASE")
@@ -61,6 +61,7 @@ dependencies {
 
 configurations.implementation {
     exclude(group = "org.springframework.data", module = "spring-data-commons")
+    exclude(group = "org.hibernate.common", module = "hibernate-commons-annotations:5.1.0.Final")
 }
 tasks.bootJar {
     archiveClassifier.set("boot")
