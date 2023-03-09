@@ -24,7 +24,7 @@ repositories {
 }
 
 springBoot {
-    mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplication")
+    mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplicationKt")
 }
 
 dependencies {
