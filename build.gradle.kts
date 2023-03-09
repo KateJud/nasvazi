@@ -23,9 +23,10 @@ repositories {
     mavenCentral()
 }
 
-application {
-    mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplicationKt")
-}
+//springBoot {
+//    mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplicationKt")
+//}
+mainClassName = "ru.hse.group_project.nasvazi.NasvaziApplicationKt"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-rest")
