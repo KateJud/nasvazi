@@ -23,7 +23,7 @@ repositories {
     mavenCentral()
 }
 
-springBoot {
+application {
     mainClass.set("ru.hse.group_project.nasvazi.NasvaziApplicationKt")
 }
 
