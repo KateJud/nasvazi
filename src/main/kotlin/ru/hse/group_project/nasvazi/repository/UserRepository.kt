@@ -70,7 +70,7 @@ class UserRepository(
 
     fun getRoles(userId: Long): List<UserRole> {
         val params = mapOf(
-            "userId" to userId,
+            "id" to userId,
         )
         return jdbcTemplate.query(GET_USER_ROLES, params, roleMapper).map { it.name }
     }

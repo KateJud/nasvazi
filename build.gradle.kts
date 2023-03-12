@@ -40,20 +40,26 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:3.0.1")
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.0.1")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.15")
+    implementation("org.springdoc:springdoc-openapi-common:1.6.15")
+    implementation("org.springdoc:springdoc-openapi-common:1.6.15")
+
+    implementation("io.swagger.core.v3:swagger-core:2.2.7")
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.7")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compileOnly("org.projectlombok:lombok")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    implementation ("com.twilio.sdk:twilio:9.2.4")
-    // implementation ("org.springframework.boot:spring-boot-starter-parent:2.4.0")
-    // implementation ("io.springfox:springfox-swagger-ui:2.6.1")
-     implementation("io.swagger.codegen.v3:swagger-codegen-maven-plugin:3.0.16")
 }
 
 configurations.implementation {
