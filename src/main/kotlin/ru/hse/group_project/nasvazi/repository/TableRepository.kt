@@ -28,6 +28,9 @@ class TableRepository(
         )
         return jdbcTemplate.query(SELECT_TABLE_BY_CAPACITY, params, tableRowMapper)
     }
+    fun getAll(): List<TableEntity> {
+        return jdbcTemplate.query(SELECT_ALL_TABLES, tableRowMapper)
+    }
 
     private val tableRowMapper = RowMapper { rs, _ ->
         TableEntity(
@@ -48,4 +51,8 @@ select * from table_ where id=:id
 
 private const val SELECT_TABLE_BY_CAPACITY = """
  select * from table_ where capacity>=:capacity
+"""
+
+private const val SELECT_ALL_TABLES = """
+ select * from table_ 
 """

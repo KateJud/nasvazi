@@ -2,14 +2,17 @@ package ru.hse.group_project.nasvazi.controller
 
 // import io.swagger.v3.oas.annotations.Operation
 // import io.swagger.v3.oas.annotations.tags.Tag
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
+import ru.hse.group_project.nasvazi.model.request.CancelBookingRequest
+import ru.hse.group_project.nasvazi.model.request.ConfirmBookingRequest
 import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
-import ru.hse.group_project.nasvazi.model.request.SimpleBookingRequest
+import ru.hse.group_project.nasvazi.model.response.ActiveBookingResponse
 import ru.hse.group_project.nasvazi.model.response.CreateBookingResponse
 import ru.hse.group_project.nasvazi.model.response.SimpleResponse
 import ru.hse.group_project.nasvazi.service.BookingService
@@ -33,17 +36,24 @@ class BookingController(private val bookingService: BookingService) {
 
     @PostMapping(value = ["/cancel"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun cancel(
-        @RequestBody request: SimpleBookingRequest
+        @RequestBody request: CancelBookingRequest
     ): SimpleResponse {
-        bookingService.cancel(request.phone)
+        bookingService.cancel(request.bookingId)
         return SimpleResponse(ResponseStatus.SUCCESS)
     }
 
     @PostMapping(value = ["/confirm"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun confirm(
-        @RequestBody request: SimpleBookingRequest
+        @RequestBody request: ConfirmBookingRequest
     ): SimpleResponse {
-        bookingService.confirm(request.phone)
+        bookingService.confirm(request.bookingId)
         return SimpleResponse(ResponseStatus.SUCCESS)
+    }
+
+    @Operation(summary = "Выдает список активных броней")
+    @PostMapping(value = ["/active"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getActive(): ActiveBookingResponse {
+        val bookings = bookingService.getActive()
+        return ActiveBookingResponse(bookings)
     }
 }

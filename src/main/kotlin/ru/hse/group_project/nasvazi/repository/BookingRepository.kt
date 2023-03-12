@@ -13,16 +13,15 @@ class BookingRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate,
     private val dataSource: DataSource
 ) {
-    val currentUser = "TEST"
 
     private val bookingJdbcInsert: SimpleJdbcInsert =
         SimpleJdbcInsert(dataSource).withTableName("booking").usingColumns(
             "user_id",
             "table_id",
             "time_from",
-            "time_to",
             "participants",
             "status",
+            "comment"
         ).usingGeneratedKeyColumns("id")
 
     fun insert(booking: BookingEntity): Long {
@@ -30,9 +29,9 @@ class BookingRepository(
             "user_id" to booking.userId,
             "table_id" to booking.tableId,
             "time_from" to booking.timeFrom,
-            "time_to" to booking.timeTo,
             "participants" to booking.participants,
             "status" to booking.status.name,
+            "comment" to booking.comment
         )
         val id = bookingJdbcInsert.executeAndReturnKey(params)
         return id.toLong()
@@ -46,6 +45,14 @@ class BookingRepository(
         jdbcTemplate.update(UPDATE_STATUS_BY_PHONE, params)
     }
 
+    fun updateStatusById(id: Long, status: BookingStatus) {
+        val params = mapOf(
+            "status" to status.name,
+            "id" to id
+        )
+        jdbcTemplate.update(UPDATE_STATUS_BY_ID, params)
+    }
+
     fun getUnavailableBookingByDate(date: String): List<BookingEntity> {
         val params = mapOf(
             "date" to date,
@@ -54,17 +61,29 @@ class BookingRepository(
         return jdbcTemplate.query(SELECT_BOOKING_BY_DATE, params, bookingRowMapper)
     }
 
+    fun getAll(): List<BookingEntity> {
+        return jdbcTemplate.query(SELECT_ALL, bookingRowMapper)
+    }
+
     private val bookingRowMapper = RowMapper { rs, _ ->
         BookingEntity(
+            id = rs.getLong("id"),
             userId = rs.getLong("user_id"),
             tableId = rs.getLong("table_id"),
             timeFrom = rs.getTimestamp("time_from").toLocalDateTime(),
-            timeTo = rs.getTimestamp("time_to").toInstant(),
             participants = rs.getLong("participants"),
-            status = BookingStatus.valueOf(rs.getString("status"))
+            status = BookingStatus.valueOf(rs.getString("status")),
+            comment = rs.getString("comment")
         )
     }
 }
+
+const val UPDATE_STATUS_BY_ID = """
+update booking
+set status = :status
+FROM booking b
+where b.id = :id
+"""
 
 const val UPDATE_STATUS_BY_PHONE = """
 update booking
@@ -79,4 +98,9 @@ select *
 from booking
 where to_date(time_from,'dd-MM-yyyy') = :date
 and status != :status
+"""
+
+const val SELECT_ALL = """
+select *
+from booking
 """

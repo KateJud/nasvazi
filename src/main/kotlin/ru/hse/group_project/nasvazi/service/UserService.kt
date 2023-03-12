@@ -61,4 +61,16 @@ class UserService(
         userRepository.createRole(user.id!!, UserRole.USER)
         return user
     }
+
+    fun getById(id: Long): UserEntity {
+        return userRepository.getById(id)
+    }
+
+    fun getAll(): List<UserEntity> {
+        return userRepository.getAll()
+    }
+
+    fun addBonus(id: Long, bonus: Long) {
+        userRepository.addBonus(bonus = bonus, userId = id)
+    }
 }

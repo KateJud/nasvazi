@@ -1,7 +1,9 @@
 package ru.hse.group_project.nasvazi.service
 
 import org.springframework.stereotype.Service
+import ru.hse.group_project.nasvazi.model.dto.BookingDto
 import ru.hse.group_project.nasvazi.model.entity.BookingEntity
+import ru.hse.group_project.nasvazi.model.entity.UserEntity
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
 import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
 import ru.hse.group_project.nasvazi.repository.BookingRepository
@@ -26,27 +28,38 @@ class BookingService(
 
         // 1) convert to bookingEntity
         val booking = BookingEntity(
-            userId = user.id,
-            tableId = table.id,
+            id = null,
+            userId = user.id!!,
+            tableId = table.id!!,
             timeFrom = request.timeFrom,
-            participants = request.participants
+            participants = request.participants,
+            comment = request.comment,
         )
 
         return bookingRepository.insert(booking)
     }
 
-    // todo
-    // форма:
-    // имя String
-    // телефон  String (парсинг на стороне фронта?)
-    // столик Long (id ?)
-    // время (? диапазон)
-    // коммент  String - необязательное поле
-    fun cancel(phone: String) {
-        bookingRepository.updateStatus(phone, BookingStatus.CANCELLED)
+    fun cancel(id: Long) {
+        bookingRepository.updateStatusById(id, BookingStatus.CANCELLED)
     }
 
-    fun confirm(phone: String) {
-        bookingRepository.updateStatus(phone, BookingStatus.CONFIRMED)
+    fun confirm(id: Long) {
+        bookingRepository.updateStatusById(id, BookingStatus.CONFIRMED)
+    }
+
+    fun getActive(): List<BookingDto> {
+        return bookingRepository.getAll().map {
+            val user: UserEntity = userService.getById(it.userId)
+            BookingDto(
+                id = it.id!!,
+                tableId = it.tableId,
+                participants = it.participants,
+                comment = it.comment,
+                userName = user.name,
+                phone = user.phone,
+                startTime = it.timeFrom,
+                status = it.status
+            )
+        }
     }
 }

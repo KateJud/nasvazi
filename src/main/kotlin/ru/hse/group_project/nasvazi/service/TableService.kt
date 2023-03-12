@@ -56,7 +56,7 @@ class TableService(
 
             // Время забронированное другими пользователями
             val unavailableStartTime =
-                tableToBookings[table.id]?.flatMap { listOf(it.timeFrom, it.timeFrom?.plusHours(1)) }?.mapNotNull { it }
+                tableToBookings[table.id]?.flatMap { listOf(it.timeFrom, it.timeFrom.plusHours(1)) }?.mapNotNull { it }
                     ?: listOf()
 
             // Оставшееся возможное время бронирования
@@ -77,7 +77,7 @@ class TableService(
         // Получаем заброненные времена
         val bookings = bookingRepository.getUnavailableBookingByDate(date.toString())
         val res = bookings.groupBy { it.tableId }.map { (tableId, bookings) ->
-            convert(tableId!!, bookings)
+            convert(tableId, bookings)
         }
         return res
     }
@@ -88,7 +88,11 @@ class TableService(
         return UnavailableTableDto(
             name = table.name,
             capacity = table.capacity,
-            unavailableStartTime = bookings.map { it.timeFrom!! }
+            unavailableStartTime = bookings.map { it.timeFrom }
         )
+    }
+
+    fun getAll(): List<TableEntity> {
+      return tableRepository.getAll()
     }
 }

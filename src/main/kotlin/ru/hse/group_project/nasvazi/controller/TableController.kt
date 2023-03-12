@@ -1,9 +1,11 @@
 package ru.hse.group_project.nasvazi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import ru.hse.group_project.nasvazi.model.request.GetAvailableTablesRequest
+import ru.hse.group_project.nasvazi.model.response.GetAllTablesResponse
 import ru.hse.group_project.nasvazi.model.response.GetAvailableTablesResponse
 import ru.hse.group_project.nasvazi.model.response.GetUnavailableTablesResponse
 import ru.hse.group_project.nasvazi.service.TableService
@@ -23,7 +25,9 @@ class TableController(
         return GetAvailableTablesResponse(tableService.getAvailable(request.date, capacity = request.capacity))
     }
 
+    @Operation(summary = "Возвращает информацию о всех столах в заведении")
     @PostMapping("/all")
-    fun getAllTables() {
+    fun getAllTables(): GetAllTablesResponse {
+        return GetAllTablesResponse(tableService.getAll())
     }
 }

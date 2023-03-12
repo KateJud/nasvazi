@@ -1,21 +1,20 @@
 package ru.hse.group_project.nasvazi.model.entity
 
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
-import java.time.Instant
 import java.time.LocalDateTime
 
 data class BookingEntity
     (
+    val id: Long?,
     // @Column(name = "user_id")
-    val userId: Long? = null,
+    val userId: Long,
     // @Column(name = "table_id")
-    val tableId: Long? = null,
+    val tableId: Long,
     // @Column(name = "time_from")
-    val timeFrom: LocalDateTime? = null,
-    // @Column(name = "time_to")
-    val timeTo: Instant? = null,
+    val timeFrom: LocalDateTime,
     // @Column(name = "participants")
     val participants: Long = 1L,
     // @Column(name = "status")
-    val status: BookingStatus = BookingStatus.CREATED
+    val status: BookingStatus = BookingStatus.CREATED,
+    val comment: String?
 )

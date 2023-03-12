@@ -41,6 +41,25 @@ class UserRepository(
         return jdbcTemplate.query(SELECT_USER_BY_PHONE, params, userRowMapper).firstOrNull()
     }
 
+    fun getById(id: Long): UserEntity {
+        val params = mapOf(
+            "id" to id,
+        )
+        return jdbcTemplate.query(SELECT_USER_BY_ID, params, userRowMapper).first()
+    }
+
+    fun getAll(): List<UserEntity> {
+        return jdbcTemplate.query(SELECT_ALL_USERS, userRowMapper)
+    }
+
+    fun addBonus(userId: Long, bonus: Long) {
+        val params = mapOf(
+            "bonus" to bonus,
+            "id" to userId
+        )
+        jdbcTemplate.update(ADD_BONUS, params)
+    }
+
     fun createRole(userId: Long, role: UserRole) {
         val params = mapOf(
             "userId" to userId,
@@ -69,6 +88,8 @@ class UserRepository(
             id = rs.getLong("id"),
             name = rs.getString("name"),
             phone = rs.getString("phone"),
+            bonus = rs.getLong("bonus"),
+            addDate =rs.getTimestamp("add_date").toLocalDateTime()
         )
     }
 
@@ -99,4 +120,18 @@ where u.id = :id
 private const val INSERT_USER_CODE = """
 insert into user_code (user_id, code)
 VALUES (:userId, :code);
+"""
+
+private const val SELECT_USER_BY_ID = """
+ select * from user_ where id=:id
+"""
+
+private const val SELECT_ALL_USERS = """
+ select * from user_
+"""
+
+private const val ADD_BONUS = """
+update user_ u
+set bonus = bonus + :bonus
+where u.id=:id
 """
