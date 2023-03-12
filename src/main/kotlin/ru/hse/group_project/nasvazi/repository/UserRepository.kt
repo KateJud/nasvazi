@@ -4,7 +4,7 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
-import ru.hse.group_project.nasvazi.config.currentUser
+//import ru.hse.group_project.nasvazi.config.currentUser
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
 import ru.hse.group_project.nasvazi.util.toLocalDateTimeUTC
 import java.time.Instant
@@ -34,9 +34,9 @@ class UserRepository(
             "bonus" to user.bonus,
             "chat_id" to user.chatId,
             "add_date" to Instant.now().toLocalDateTimeUTC(),
-            "add_who" to currentUser,
+            "add_who" to "currentUser",
             "edit_date" to Instant.now().toLocalDateTimeUTC(),
-            "edit_who" to currentUser,
+            "edit_who" to "currentUser",
         )
         val id = userJdbcInsert.executeAndReturnKey(params)
         return UserEntity(id.toLong(), user)
