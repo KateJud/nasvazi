@@ -4,10 +4,10 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
-import ru.hse.group_project.nasvazi.config.currentUser
+import ru.hse.group_project.nasvazi.model.entity.CodeEntity
+import ru.hse.group_project.nasvazi.model.entity.RoleEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
-import ru.hse.group_project.nasvazi.util.toLocalDateTimeUTC
-import java.time.Instant
+import ru.hse.group_project.nasvazi.model.enums.UserRole
 import javax.sql.DataSource
 
 @Repository
@@ -16,27 +16,19 @@ class UserRepository(
     dataSource: DataSource
 ) {
 
-    private val userJdbcInsert: SimpleJdbcInsert = SimpleJdbcInsert(dataSource).withTableName("item").usingColumns(
+    private val userJdbcInsert: SimpleJdbcInsert = SimpleJdbcInsert(dataSource).withTableName("user_").usingColumns(
         "name",
         "phone",
         "bonus",
         "chat_id",
-        "edit_who",
-        "edit_date",
-        "add_who",
-        "add_date",
     ).usingGeneratedKeyColumns("id")
 
-    fun insert(user: UserEntity): UserEntity {
+    fun create(user: UserEntity): UserEntity {
         val params = mapOf(
             "name" to user.name,
             "phone" to user.phone,
             "bonus" to user.bonus,
             "chat_id" to user.chatId,
-            "add_date" to Instant.now().toLocalDateTimeUTC(),
-            "add_who" to currentUser,
-            "edit_date" to Instant.now().toLocalDateTimeUTC(),
-            "edit_who" to currentUser,
         )
         val id = userJdbcInsert.executeAndReturnKey(params)
         return UserEntity(id.toLong(), user)
@@ -49,6 +41,29 @@ class UserRepository(
         return jdbcTemplate.query(SELECT_USER_BY_PHONE, params, userRowMapper).firstOrNull()
     }
 
+    fun createRole(userId: Long, role: UserRole) {
+        val params = mapOf(
+            "userId" to userId,
+            "roleId" to role.id,
+        )
+        jdbcTemplate.update(INSERT_USER_ROLE_REF, params)
+    }
+
+    fun getRoles(userId: Long): List<UserRole> {
+        val params = mapOf(
+            "userId" to userId,
+        )
+        return jdbcTemplate.query(GET_USER_ROLES, params, roleMapper).map { it.name }
+    }
+
+    fun createCode(code: CodeEntity) {
+        val params = mapOf(
+            "userId" to code.userId,
+            "code" to code.code,
+        )
+        jdbcTemplate.update(INSERT_USER_CODE, params)
+    }
+
     private val userRowMapper = RowMapper { rs, _ ->
         UserEntity(
             id = rs.getLong("id"),
@@ -56,8 +71,32 @@ class UserRepository(
             phone = rs.getString("phone"),
         )
     }
+
+    private val roleMapper = RowMapper { rs, _ ->
+        RoleEntity(
+            name = UserRole.valueOf(rs.getString("name")),
+        )
+    }
 }
 
 private const val SELECT_USER_BY_PHONE = """
- select * from user where phone=:phone limit 1
+ select * from user_ where phone=:phone limit 1
+"""
+
+private const val INSERT_USER_ROLE_REF = """
+insert into user_role_ref (user_id, role_id)
+values (:userId, :roleId)
+"""
+
+private const val GET_USER_ROLES = """
+select r.name
+from role r
+         join user_role_ref urr on r.id = urr.role_id
+         join user_ u on urr.user_id = u.id
+where u.id = :id
+"""
+
+private const val INSERT_USER_CODE = """
+insert into user_code (user_id, code)
+VALUES (:userId, :code);
 """

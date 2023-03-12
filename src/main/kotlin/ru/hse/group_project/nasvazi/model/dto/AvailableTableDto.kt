@@ -2,8 +2,8 @@ package ru.hse.group_project.nasvazi.model.dto
 
 import java.time.LocalDateTime
 
-data class UnavailableTableDto(
+data class AvailableTableDto(
     val name: String,
     val capacity: Long,
-    var unavailableStartTime: List<LocalDateTime>
+    var availableStartTimes: List<LocalDateTime>
 )

@@ -1,14 +1,13 @@
 package ru.hse.group_project.nasvazi.model.request
 
-import java.time.Instant
+import java.time.LocalDateTime
 
 data class CreateBookingRequest(
     val name: String,
     val phone: String,
     val participants: Long,
-    val tableId: Long,
-    val timeFrom: Instant,
-    val timeTo: Instant,
-    val comment: String
+    val tableName: String,
+    val timeFrom: LocalDateTime,
+    val comment: String?
 ) :
     NasvaziRequest

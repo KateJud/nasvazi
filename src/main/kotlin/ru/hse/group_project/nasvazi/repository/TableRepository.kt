@@ -4,7 +4,6 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import ru.hse.group_project.nasvazi.model.entity.TableEntity
-import javax.sql.DataSource
 
 @Repository
 class TableRepository(
@@ -23,6 +22,12 @@ class TableRepository(
         )
         return jdbcTemplate.query(SELECT_TABLE_BY_ID, params, tableRowMapper).first()
     }
+    fun getByCapacity(capacity: Long): List<TableEntity> {
+        val params = mapOf(
+            "capacity" to capacity,
+        )
+        return jdbcTemplate.query(SELECT_TABLE_BY_CAPACITY, params, tableRowMapper)
+    }
 
     private val tableRowMapper = RowMapper { rs, _ ->
         TableEntity(
@@ -38,5 +43,9 @@ private const val SELECT_TABLE_BY_NAME = """
 """
 
 private const val SELECT_TABLE_BY_ID = """
- select * from table_ where id=:id
+select * from table_ where id=:id
+"""
+
+private const val SELECT_TABLE_BY_CAPACITY = """
+ select * from table_ where capacity>=:capacity
 """

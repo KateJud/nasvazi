@@ -19,17 +19,16 @@ class BookingService(
 
         // user
         // get Or create user by phoneId
-        val user = userService.getOrCreate(request.phone)
+        val user = userService.getOrCreate(request.phone, request.name)
 
         // table  - search by name
-        val table = tableService.get(request.name)
+        val table = tableService.get(request.tableName)
 
         // 1) convert to bookingEntity
         val booking = BookingEntity(
             userId = user.id,
             tableId = table.id,
             timeFrom = request.timeFrom,
-            timeTo = request.timeTo,
             participants = request.participants
         )
 

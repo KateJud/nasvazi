@@ -24,25 +24,21 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-rest")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-web:3.0.1")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc:3.0.1")
     implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.hibernate:hibernate-core:6.1.7.Final")
-    implementation("com.vladmihalcea:hibernate-types-52:2.20.0")
-    implementation("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final")
-    implementation("org.hibernate:hibernate-entitymanager:5.4.10.Final")
-    implementation("org.springframework.data:spring-data-jpa:1.11.22.RELEASE")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     compileOnly("org.projectlombok:lombok")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+    implementation ("com.twilio.sdk:twilio:9.2.4")
+    // implementation ("org.springframework.boot:spring-boot-starter-parent:2.4.0")
+    // implementation ("io.springfox:springfox-swagger-ui:2.6.1")
+     implementation("io.swagger.codegen.v3:swagger-codegen-maven-plugin:3.0.16")
 }
 
 tasks.withType<KotlinCompile> {

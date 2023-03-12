@@ -5,10 +5,10 @@ data class UserEntity(
     var id: Long? = null,
 
     // @Column(name = "name")
-    var name: String? = null,
+    var name: String,
 
     // @Column(name = "phone")
-    var phone: String? = null,
+    var phone: String,
 
     // @Column(name = "bonus")
     var bonus: Long = 0,

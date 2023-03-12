@@ -1,7 +1,7 @@
 package ru.hse.group_project.nasvazi.model.response
 
-import ru.hse.group_project.nasvazi.model.dto.UnavailableTableDto
+import ru.hse.group_project.nasvazi.model.dto.AvailableTableDto
 
 data class GetAvailableTablesResponse(
-    val tables: List<UnavailableTableDto>
+    val tables: List<AvailableTableDto>
 ) : NasvaziResponse
