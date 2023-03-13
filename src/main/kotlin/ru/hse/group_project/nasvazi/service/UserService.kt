@@ -5,6 +5,7 @@ import com.twilio.rest.api.v2010.account.Message
 import com.twilio.type.PhoneNumber
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import ru.hse.group_project.nasvazi.model.dto.UserDto
 import ru.hse.group_project.nasvazi.model.entity.CodeEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
 import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
@@ -56,15 +57,6 @@ class UserService(
         // save code
         userRepository.createCode(codeEntity)
 
-
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
-        val message: Message = Message.creator(
-            PhoneNumber("+79169775431"),
-            PhoneNumber("+79169775431"),
-            code.toString()
-        )
-            .create()
-
         return AuthResponse(ResponseStatus.SUCCESS, code.toLong())
     }
 
@@ -92,7 +84,7 @@ class UserService(
         return userRepository.getById(id)
     }
 
-    fun getAll(): List<UserEntity> {
+    fun getAll(): List<UserDto> {
         return userRepository.getAll()
     }
 

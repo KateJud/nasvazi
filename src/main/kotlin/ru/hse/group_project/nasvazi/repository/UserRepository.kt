@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
+import ru.hse.group_project.nasvazi.model.dto.UserDto
 import ru.hse.group_project.nasvazi.model.entity.CodeEntity
 import ru.hse.group_project.nasvazi.model.entity.RoleEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
@@ -48,8 +49,8 @@ class UserRepository(
         return jdbcTemplate.query(SELECT_USER_BY_ID, params, userRowMapper).first()
     }
 
-    fun getAll(): List<UserEntity> {
-        return jdbcTemplate.query(SELECT_ALL_USERS, userRowMapper)
+    fun getAll(): List<UserDto> {
+        return jdbcTemplate.query(SELECT_USERS_DTO, userDtoRowMapper)
     }
 
     fun addBonus(userId: Long, bonus: Long) {
@@ -89,7 +90,20 @@ class UserRepository(
             name = rs.getString("name"),
             phone = rs.getString("phone"),
             bonus = rs.getLong("bonus"),
-            addDate =rs.getTimestamp("add_date").toLocalDateTime()
+            addDate = rs.getTimestamp("add_date").toLocalDateTime()
+        )
+    }
+
+    private val userDtoRowMapper = RowMapper { rs, _ ->
+        UserDto(
+            id = rs.getLong("id"),
+            name = rs.getString("name"),
+            phone = rs.getString("phone"),
+            bonus = rs.getLong("bonus"),
+            addDate = rs.getTimestamp("add_date").toLocalDateTime(),
+            cancelledBookings = rs.getLong("cancelled_bookings"),
+            confirmedBookings = rs.getLong("confirmed_bookings"),
+            totalBookings = rs.getLong("total_bookings"),
         )
     }
 
@@ -126,8 +140,19 @@ private const val SELECT_USER_BY_ID = """
  select * from user_ where id=:id
 """
 
-private const val SELECT_ALL_USERS = """
- select * from user_
+private const val SELECT_USERS_DTO = """
+select u.id,
+       u.name,
+       u.phone,
+       u.bonus,
+       u.chat_id,
+       u.add_date,
+       COUNT(*) FILTER (where b.status = 'CONFIRMED') as confirmed_bookings,
+       COUNT(*) FILTER (where b.status = 'CANCELLED') as cancelled_bookings,
+       COUNT(*)                                       as total_bookings
+from user_ u
+         left join booking b on u.id = b.user_id
+group by u.id;
 """
 
 private const val ADD_BONUS = """
