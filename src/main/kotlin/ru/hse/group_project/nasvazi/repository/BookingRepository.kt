@@ -38,14 +38,6 @@ class BookingRepository(
         return id.toLong()
     }
 
-    fun updateStatus(phone: String, status: BookingStatus) {
-        val params = mapOf(
-            "status" to status.name,
-            "phone" to phone
-        )
-        jdbcTemplate.update(UPDATE_STATUS_BY_PHONE, params)
-    }
-
     fun updateStatusById(id: Long, status: BookingStatus) {
         val params = mapOf(
             "status" to status.name,
@@ -94,18 +86,9 @@ class BookingRepository(
 }
 
 const val UPDATE_STATUS_BY_ID = """
-update booking
+update booking b
 set status = :status
-FROM booking b
 where b.id = :id
-"""
-
-const val UPDATE_STATUS_BY_PHONE = """
-update booking
-set status = :status
-FROM booking b
-         JOIN user_ u ON b.user_id = u.id
-where u.phone = :phone
 """
 
 const val SELECT_BOOKING_BY_DATE_AND_STATUS = """

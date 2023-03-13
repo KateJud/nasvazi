@@ -1,5 +1,8 @@
 package ru.hse.group_project.nasvazi.service
 
+import com.twilio.Twilio
+import com.twilio.rest.api.v2010.account.Message
+import com.twilio.type.PhoneNumber
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.hse.group_project.nasvazi.model.entity.CodeEntity
@@ -9,6 +12,9 @@ import ru.hse.group_project.nasvazi.model.enums.UserRole
 import ru.hse.group_project.nasvazi.model.response.AuthResponse
 import ru.hse.group_project.nasvazi.repository.UserRepository
 
+private const val ACCOUNT_SID = "ACe994996693bfc46d1a9b6e680619fba3"
+private const val AUTH_TOKEN = "yfljtkj-ytdsyjcbvj-ytdjpvj;yj-z-yt-[jxe-'nj-ltkfnm-,jkmit"
+
 /**
  * Сервис пользователя
  */
@@ -16,9 +22,10 @@ import ru.hse.group_project.nasvazi.repository.UserRepository
 class UserService(
     private val userRepository: UserRepository,
 ) {
+
     @Transactional
     fun getOrCreate(phone: String, name: String): UserEntity {
-        return userRepository.get(phone) ?: createUser(phone, name)
+        return userRepository.get(phone) ?: createUser(phone = phone, name = name)
     }
 
     fun login(phone: String, expectedRole: UserRole): AuthResponse {
@@ -48,7 +55,26 @@ class UserService(
         )
         // save code
         userRepository.createCode(codeEntity)
+
+
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
+        val message: Message = Message.creator(
+            PhoneNumber("+79169775431"),
+            PhoneNumber("+79169775431"),
+            code.toString()
+        )
+            .create()
+
         return AuthResponse(ResponseStatus.SUCCESS, code.toLong())
+    }
+
+    fun testTwilio() {
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
+        val message: Message = Message.creator(
+            PhoneNumber("+79169775431"),
+            PhoneNumber("+79169775431"),
+            "keks"
+        ).create()
     }
 
     private fun createUser(

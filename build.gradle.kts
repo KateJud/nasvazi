@@ -60,6 +60,8 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+
+    implementation("com.twilio.sdk:twilio:7.20.0")
 }
 
 configurations.implementation {
