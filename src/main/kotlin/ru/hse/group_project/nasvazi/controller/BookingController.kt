@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
 import ru.hse.group_project.nasvazi.model.request.CancelBookingRequest
 import ru.hse.group_project.nasvazi.model.request.ConfirmBookingRequest
 import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
-import ru.hse.group_project.nasvazi.model.request.GetBookingByDateRequest
-import ru.hse.group_project.nasvazi.model.request.GetBookingByUserRequest
 import ru.hse.group_project.nasvazi.model.response.ActiveBookingResponse
 import ru.hse.group_project.nasvazi.model.response.CreateBookingResponse
 import ru.hse.group_project.nasvazi.model.response.SimpleResponse
 import ru.hse.group_project.nasvazi.service.BookingService
+import java.time.LocalDate
 
 /**
  * Отвечает за crud модель бронирования столиков
@@ -61,15 +61,15 @@ class BookingController(private val bookingService: BookingService) {
 
     @Operation(summary = "Выдает список броней по дате")
     @GetMapping(value = ["/by-date"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getByDate(@RequestBody request: GetBookingByDateRequest): ActiveBookingResponse {
-        val bookings = bookingService.getByDate(request.date)
+    fun getByDate(@RequestParam("date") date: LocalDate): ActiveBookingResponse {
+        val bookings = bookingService.getByDate(date)
         return ActiveBookingResponse(bookings)
     }
 
     @Operation(summary = "Выдает список броней на пользователя")
     @GetMapping(value = ["/by-user"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getByUser(@RequestBody request: GetBookingByUserRequest): ActiveBookingResponse {
-        val bookings = bookingService.getByUser(request.userId)
+    fun getByUser(@RequestParam("userId") userId: Long): ActiveBookingResponse {
+        val bookings = bookingService.getByUser(userId)
         return ActiveBookingResponse(bookings)
     }
 }
