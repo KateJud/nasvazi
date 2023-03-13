@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
 import ru.hse.group_project.nasvazi.model.entity.BookingEntity
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
+import java.time.LocalDate
 import javax.sql.DataSource
 
 @Repository
@@ -58,11 +59,25 @@ class BookingRepository(
             "date" to date,
             "status" to BookingStatus.CANCELLED.name,
         )
-        return jdbcTemplate.query(SELECT_BOOKING_BY_DATE, params, bookingRowMapper)
+        return jdbcTemplate.query(SELECT_BOOKING_BY_DATE_AND_STATUS, params, bookingRowMapper)
     }
 
     fun getAll(): List<BookingEntity> {
         return jdbcTemplate.query(SELECT_ALL, bookingRowMapper)
+    }
+
+    fun getByDate(date: LocalDate): List<BookingEntity> {
+        val params = mapOf(
+            "date" to date,
+        )
+        return jdbcTemplate.query(SELECT_BY_DATE, params, bookingRowMapper)
+    }
+
+    fun getByUser(userId: Long): List<BookingEntity> {
+        val params = mapOf(
+            "userId" to userId,
+        )
+        return jdbcTemplate.query(SELECT_BY_USER, params, bookingRowMapper)
     }
 
     private val bookingRowMapper = RowMapper { rs, _ ->
@@ -93,7 +108,7 @@ FROM booking b
 where u.phone = :phone
 """
 
-const val SELECT_BOOKING_BY_DATE = """
+const val SELECT_BOOKING_BY_DATE_AND_STATUS = """
 select *
 from booking
 where to_date(time_from,'dd-MM-yyyy') = :date
@@ -103,4 +118,16 @@ and status != :status
 const val SELECT_ALL = """
 select *
 from booking
+"""
+
+const val SELECT_BY_DATE = """
+select *
+from booking
+where to_date(time_from::text,'yyyy-MM-dd') = :date
+"""
+
+const val SELECT_BY_USER = """
+select *
+from booking
+where user_id = :userId
 """

@@ -7,6 +7,7 @@ import ru.hse.group_project.nasvazi.model.entity.UserEntity
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
 import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
 import ru.hse.group_project.nasvazi.repository.BookingRepository
+import java.time.LocalDate
 
 /**
  * Сервис бронирования
@@ -49,17 +50,33 @@ class BookingService(
 
     fun getActive(): List<BookingDto> {
         return bookingRepository.getAll().map {
-            val user: UserEntity = userService.getById(it.userId)
-            BookingDto(
-                id = it.id!!,
-                tableId = it.tableId,
-                participants = it.participants,
-                comment = it.comment,
-                userName = user.name,
-                phone = user.phone,
-                startTime = it.timeFrom,
-                status = it.status
-            )
+            convertToBookingDto(it)
         }
+    }
+
+    fun getByDate(date: LocalDate): List<BookingDto> {
+        return bookingRepository.getByDate(date).map {
+            convertToBookingDto(it)
+        }
+    }
+
+    fun getByUser(userId: Long): List<BookingDto> {
+        return bookingRepository.getByUser(userId).map {
+            convertToBookingDto(it)
+        }
+    }
+
+    private fun convertToBookingDto(it: BookingEntity): BookingDto {
+        val user: UserEntity = userService.getById(it.userId)
+        return BookingDto(
+            id = it.id!!,
+            tableId = it.tableId,
+            participants = it.participants,
+            comment = it.comment,
+            userName = user.name,
+            phone = user.phone,
+            startTime = it.timeFrom,
+            status = it.status
+        )
     }
 }

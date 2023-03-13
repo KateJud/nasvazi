@@ -1,7 +1,5 @@
 package ru.hse.group_project.nasvazi.controller
 
-// import io.swagger.v3.oas.annotations.Operation
-// import io.swagger.v3.oas.annotations.tags.Tag
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -14,6 +12,8 @@ import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
 import ru.hse.group_project.nasvazi.model.request.CancelBookingRequest
 import ru.hse.group_project.nasvazi.model.request.ConfirmBookingRequest
 import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
+import ru.hse.group_project.nasvazi.model.request.GetBookingByDateRequest
+import ru.hse.group_project.nasvazi.model.request.GetBookingByUserRequest
 import ru.hse.group_project.nasvazi.model.response.ActiveBookingResponse
 import ru.hse.group_project.nasvazi.model.response.CreateBookingResponse
 import ru.hse.group_project.nasvazi.model.response.SimpleResponse
@@ -28,7 +28,6 @@ import ru.hse.group_project.nasvazi.service.BookingService
 @CrossOrigin
 class BookingController(private val bookingService: BookingService) {
 
-    //  @Operation(summary = "Create ")
     @PostMapping(value = ["/create"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun book(
         @RequestBody request: CreateBookingRequest
@@ -57,6 +56,20 @@ class BookingController(private val bookingService: BookingService) {
     @GetMapping(value = ["/active"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getActive(): ActiveBookingResponse {
         val bookings = bookingService.getActive()
+        return ActiveBookingResponse(bookings)
+    }
+
+    @Operation(summary = "Выдает список броней по дате")
+    @GetMapping(value = ["/by-date"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getByDate(@RequestBody request: GetBookingByDateRequest): ActiveBookingResponse {
+        val bookings = bookingService.getByDate(request.date)
+        return ActiveBookingResponse(bookings)
+    }
+
+    @Operation(summary = "Выдает список броней на пользователя")
+    @GetMapping(value = ["/by-user"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getByUser(@RequestBody request: GetBookingByUserRequest): ActiveBookingResponse {
+        val bookings = bookingService.getByUser(request.userId)
         return ActiveBookingResponse(bookings)
     }
 }
