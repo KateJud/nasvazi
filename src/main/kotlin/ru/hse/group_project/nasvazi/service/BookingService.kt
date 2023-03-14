@@ -3,6 +3,7 @@ package ru.hse.group_project.nasvazi.service
 import org.springframework.stereotype.Service
 import ru.hse.group_project.nasvazi.model.dto.BookingDto
 import ru.hse.group_project.nasvazi.model.entity.BookingEntity
+import ru.hse.group_project.nasvazi.model.entity.TableEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
 import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
@@ -20,6 +21,9 @@ class BookingService(
     private val userService: UserService,
     private val tableService: TableService,
 ) {
+
+    private val BOOKING_TIME = 2L
+
     fun book(request: CreateBookingRequest): CreateBookingResponse {
 
         // user
@@ -28,6 +32,7 @@ class BookingService(
 
         // table  - search by name
         val table = tableService.get(request.tableName)
+        checkTableIsAvailableAtTime(table, request.timeFrom)
 
         // 1) convert to bookingEntity
         val booking = BookingEntity(
@@ -41,6 +46,15 @@ class BookingService(
 
         val bookingId = bookingRepository.insert(booking)
         return CreateBookingResponse(id = bookingId, userId = user.id!!)
+    }
+
+    private fun checkTableIsAvailableAtTime(table: TableEntity, startBookingTime: LocalDateTime) {
+        if (bookingRepository.getByTimeRange(table.id!!,
+                startBookingTime.minusHours(1),
+                startBookingTime.plusHours(1))
+                .isNotEmpty()
+        )
+            throw IllegalArgumentException("Table with tableId ${table.id} is not free at $startBookingTime")
     }
 
     fun cancel(id: Long) {

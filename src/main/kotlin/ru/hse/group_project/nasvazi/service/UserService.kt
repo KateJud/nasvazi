@@ -13,8 +13,8 @@ import ru.hse.group_project.nasvazi.model.enums.UserRole
 import ru.hse.group_project.nasvazi.model.response.AuthResponse
 import ru.hse.group_project.nasvazi.repository.UserRepository
 
-private const val ACCOUNT_SID = "ACe994996693bfc46d1a9b6e680619fba3"
-private const val AUTH_TOKEN = "yfljtkj-ytdsyjcbvj-ytdjpvj;yj-z-yt-[jxe-'nj-ltkfnm-,jkmit"
+private const val ACCOUNT_SID = "AC099936283bbaf1f451cf198df29c2339"
+private const val AUTH_TOKEN = "c57fe3176ded45c4daecfb45e8b53180"
 
 /**
  * Сервис пользователя

@@ -80,6 +80,15 @@ class BookingRepository(
         return jdbcTemplate.query(SELECT_BY_USER, params, bookingRowMapper)
     }
 
+    fun getByTimeRange(tableId: Long, startDateTime: LocalDateTime, endDateTime: LocalDateTime): List<BookingEntity> {
+        val params = mapOf(
+            "tableId" to tableId,
+            "startTime" to startDateTime,
+            "endTime" to endDateTime,
+        )
+        return jdbcTemplate.query(SELECT_IN_TIME_RANGE, params, bookingRowMapper)
+    }
+
     private val bookingRowMapper = RowMapper { rs, _ ->
         BookingEntity(
             id = rs.getLong("id"),
@@ -127,4 +136,12 @@ const val SELECT_BY_USER = """
 select *
 from booking
 where user_id = :userId
+"""
+
+const val SELECT_IN_TIME_RANGE = """
+select *
+from booking
+where table_id = :tableId
+  and time_from >=:startTime
+   and time_from <=:endTime
 """

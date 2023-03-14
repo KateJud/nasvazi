@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
 import ru.hse.group_project.nasvazi.model.request.AuthRequest
+import ru.hse.group_project.nasvazi.model.request.ConfirmPhoneAuthRequest
 import ru.hse.group_project.nasvazi.model.response.AuthResponse
 import ru.hse.group_project.nasvazi.model.response.SimpleResponse
 import ru.hse.group_project.nasvazi.service.UserService
@@ -41,10 +42,9 @@ class AuthController(
     // выдача jwt
     @PostMapping(value = ["/confirm-number"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun cancel(
-        @RequestBody request: AuthRequest
+        @RequestBody request: ConfirmPhoneAuthRequest
     ): SimpleResponse {
         // Приходит телефон -- если админ, -- ок; смс -- ок -> jwt
-
         return SimpleResponse(ResponseStatus.SUCCESS)
     }
 
