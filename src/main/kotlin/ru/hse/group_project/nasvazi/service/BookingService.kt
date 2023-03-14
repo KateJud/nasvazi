@@ -6,6 +6,7 @@ import ru.hse.group_project.nasvazi.model.entity.BookingEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
 import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
+import ru.hse.group_project.nasvazi.model.response.CreateBookingResponse
 import ru.hse.group_project.nasvazi.repository.BookingRepository
 import java.time.LocalDate
 
@@ -18,7 +19,7 @@ class BookingService(
     private val userService: UserService,
     private val tableService: TableService,
 ) {
-    fun book(request: CreateBookingRequest): Long {
+    fun book(request: CreateBookingRequest): CreateBookingResponse {
 
         // user
         // get Or create user by phoneId
@@ -37,7 +38,8 @@ class BookingService(
             comment = request.comment,
         )
 
-        return bookingRepository.insert(booking)
+        val bookingId = bookingRepository.insert(booking)
+        return  CreateBookingResponse(id=bookingId, userId = user.id!!)
     }
 
     fun cancel(id: Long) {

@@ -32,8 +32,7 @@ class BookingController(private val bookingService: BookingService) {
     fun book(
         @RequestBody request: CreateBookingRequest
     ): CreateBookingResponse {
-        val bookingId = bookingService.book(request)
-        return CreateBookingResponse(id = bookingId)
+        return bookingService.book(request)
     }
 
     @PostMapping(value = ["/cancel"], produces = [MediaType.APPLICATION_JSON_VALUE])

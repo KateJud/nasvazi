@@ -3,8 +3,11 @@ package ru.hse.group_project.nasvazi.service
 import com.twilio.Twilio
 import com.twilio.rest.api.v2010.account.Message
 import com.twilio.type.PhoneNumber
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.client.HttpClientErrorException.BadRequest
 import ru.hse.group_project.nasvazi.model.dto.UserDto
 import ru.hse.group_project.nasvazi.model.entity.CodeEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
@@ -89,6 +92,13 @@ class UserService(
     }
 
     fun addBonus(id: Long, bonus: Long) {
+        validateCanReduce(userId = id, bonus = bonus)
         userRepository.addBonus(bonus = bonus, userId = id)
+    }
+
+    private fun validateCanReduce(userId: Long, bonus: Long) {
+        val balance = userRepository.getById(userId).bonus
+        if (userRepository.getById(userId).bonus + bonus < 0)
+            throw IllegalArgumentException("Can not reduce $bonus bonuses because current balance is $balance ")
     }
 }
