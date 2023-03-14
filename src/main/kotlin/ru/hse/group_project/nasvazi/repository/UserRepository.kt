@@ -35,7 +35,7 @@ class UserRepository(
         return UserEntity(id.toLong(), user)
     }
 
-    fun get(phone: String): UserEntity? {
+    fun getByPhone(phone: String): UserEntity? {
         val params = mapOf(
             "phone" to phone,
         )
@@ -115,7 +115,7 @@ class UserRepository(
 }
 
 private const val SELECT_USER_BY_PHONE = """
- select * from user_ where phone=:phone limit 1
+select * from user_ where phone=:phone limit 1
 """
 
 private const val INSERT_USER_ROLE_REF = """

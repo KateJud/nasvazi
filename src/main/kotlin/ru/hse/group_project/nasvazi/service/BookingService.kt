@@ -9,6 +9,7 @@ import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
 import ru.hse.group_project.nasvazi.model.response.CreateBookingResponse
 import ru.hse.group_project.nasvazi.repository.BookingRepository
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Сервис бронирования
@@ -58,6 +59,12 @@ class BookingService(
 
     fun getByDate(date: LocalDate): List<BookingDto> {
         return bookingRepository.getByDate(date).map {
+            convertToBookingDto(it)
+        }
+    }
+
+    fun getByDateTime(date: LocalDateTime): List<BookingDto> {
+        return bookingRepository.getByDateTime(date).map {
             convertToBookingDto(it)
         }
     }

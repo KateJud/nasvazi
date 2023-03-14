@@ -3,11 +3,8 @@ package ru.hse.group_project.nasvazi.service
 import com.twilio.Twilio
 import com.twilio.rest.api.v2010.account.Message
 import com.twilio.type.PhoneNumber
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.client.HttpClientErrorException.BadRequest
 import ru.hse.group_project.nasvazi.model.dto.UserDto
 import ru.hse.group_project.nasvazi.model.entity.CodeEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
@@ -29,11 +26,11 @@ class UserService(
 
     @Transactional
     fun getOrCreate(phone: String, name: String): UserEntity {
-        return userRepository.get(phone) ?: createUser(phone = phone, name = name)
+        return userRepository.getByPhone(phone) ?: createUser(phone = phone, name = name)
     }
 
     fun login(phone: String, expectedRole: UserRole): AuthResponse {
-        var user = userRepository.get(phone)
+        var user = userRepository.getByPhone(phone)
         // нет такого админа в бд
         if (user == null && expectedRole == UserRole.ADMIN) {
             return AuthResponse(ResponseStatus.FAIL, null)

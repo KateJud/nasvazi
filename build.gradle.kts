@@ -61,7 +61,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 
-    implementation("com.twilio.sdk:twilio:7.20.0")
+    implementation("com.twilio.sdk:twilio:9.2.5")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("com.google.android.gms:play-services-auth:19.2.0")
 }
 
 configurations.implementation {

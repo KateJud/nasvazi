@@ -9,14 +9,14 @@ import ru.hse.group_project.nasvazi.model.entity.TableEntity
 class TableRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate,
 ) {
-    fun get(name: String): TableEntity {
+    fun getByName(name: String): TableEntity {
         val params = mapOf(
             "name" to name,
         )
         return jdbcTemplate.query(SELECT_TABLE_BY_NAME, params, tableRowMapper).first()
     }
 
-    fun get(id: Long): TableEntity {
+    fun getById(id: Long): TableEntity {
         val params = mapOf(
             "id" to id,
         )

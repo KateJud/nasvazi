@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository
 import ru.hse.group_project.nasvazi.model.entity.BookingEntity
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.sql.DataSource
 
 @Repository
@@ -65,6 +66,13 @@ class BookingRepository(
         return jdbcTemplate.query(SELECT_BY_DATE, params, bookingRowMapper)
     }
 
+    fun getByDateTime(dateTime: LocalDateTime): List<BookingEntity> {
+        val params = mapOf(
+            "dateTime" to dateTime,
+        )
+        return jdbcTemplate.query(SELECT_BY_DATE_TIME, params, bookingRowMapper)
+    }
+
     fun getByUser(userId: Long): List<BookingEntity> {
         val params = mapOf(
             "userId" to userId,
@@ -107,6 +115,12 @@ const val SELECT_BY_DATE = """
 select *
 from booking
 where to_date(time_from::text,'yyyy-MM-dd') = :date
+"""
+
+const val SELECT_BY_DATE_TIME = """
+select *
+from booking
+where time_from =:dateTime
 """
 
 const val SELECT_BY_USER = """

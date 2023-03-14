@@ -20,7 +20,6 @@ class TableService(
     private val tableRepository: TableRepository,
     private val bookingRepository: BookingRepository,
 ) {
-    val BOOKING_DURATION = LocalTime.of(2, 0)
     val POSSIBLE_START_BOOKING_TIME = listOf<LocalTime>(
         LocalTime.of(12, 0),
         LocalTime.of(13, 0),
@@ -38,7 +37,7 @@ class TableService(
 
     @Transactional
     fun get(name: String): TableEntity {
-        return tableRepository.get(name)
+        return tableRepository.getByName(name)
     }
 
     fun getAvailable(date: LocalDate, capacity: Long): List<AvailableTableDto> {
@@ -72,6 +71,43 @@ class TableService(
         return res
     }
 
+    fun getAvailableById(date: LocalDate, tableId: Long): List<AvailableTableDto> {
+        // Получаем столики
+        val tables = listOf(tableRepository.getById(tableId))
+        return convertToAvailableTableDtos(date, tables)
+    }
+
+    private fun convertToAvailableTableDtos(
+        date: LocalDate,
+        tables: List<TableEntity>
+    ): List<AvailableTableDto> {
+        // Получаем заброненные времена
+        val tableToBookings = bookingRepository.getUnavailableBookingByDate(date.toString()).groupBy { it.tableId }
+        // get UnavailableBooking date
+        val res = tables.map { table ->
+
+            // Всевозможное время начала бронирования
+            val availableStartTimes: MutableList<LocalDateTime> =
+                POSSIBLE_START_BOOKING_TIME
+                    .map { LocalDateTime.of(date, it) }.toMutableList()
+
+            // Время забронированное другими пользователями
+            val unavailableStartTime =
+                tableToBookings[table.id]?.flatMap { listOf(it.timeFrom, it.timeFrom.plusHours(1)) }?.mapNotNull { it }
+                    ?: listOf()
+
+            // Оставшееся возможное время бронирования
+            availableStartTimes.removeAll(unavailableStartTime)
+
+            AvailableTableDto(
+                name = table.name,
+                capacity = table.capacity,
+                availableStartTimes = availableStartTimes
+            )
+        }
+        return res
+    }
+
     // беру дату на выходе полная инфа по всем столикам за день
     fun getUnavailable(date: LocalDate): List<UnavailableTableDto> {
         // Получаем заброненные времена
@@ -84,7 +120,7 @@ class TableService(
 
     fun convert(tableId: Long, bookings: List<BookingEntity>): UnavailableTableDto {
         bookings.first().tableId
-        val table: TableEntity = tableRepository.get(tableId)
+        val table: TableEntity = tableRepository.getById(tableId)
         return UnavailableTableDto(
             name = table.name,
             capacity = table.capacity,
