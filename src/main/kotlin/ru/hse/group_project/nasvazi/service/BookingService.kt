@@ -39,7 +39,7 @@ class BookingService(
         )
 
         val bookingId = bookingRepository.insert(booking)
-        return  CreateBookingResponse(id=bookingId, userId = user.id!!)
+        return CreateBookingResponse(id = bookingId, userId = user.id!!)
     }
 
     fun cancel(id: Long) {
@@ -75,6 +75,7 @@ class BookingService(
             tableId = it.tableId,
             participants = it.participants,
             comment = it.comment,
+            userId = it.userId,
             userName = user.name,
             phone = user.phone,
             startTime = it.timeFrom,
