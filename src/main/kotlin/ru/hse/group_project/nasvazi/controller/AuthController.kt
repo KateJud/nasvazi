@@ -41,7 +41,7 @@ class AuthController(
     // проверка проверочного номера
     // выдача jwt
     @PostMapping(value = ["/confirm-number"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun cancel(
+    fun confirm(
         @RequestBody request: ConfirmPhoneAuthRequest
     ): SimpleResponse {
         // Приходит телефон -- если админ, -- ок; смс -- ок -> jwt
