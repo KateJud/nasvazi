@@ -54,8 +54,7 @@ class BookingService(
                 table.id!!,
                 startBookingTime.minusHours(1),
                 startBookingTime.plusHours(1)
-            )
-                .isNotEmpty()
+            ).any { it.status != BookingStatus.CANCELLED }
         )
             throw IllegalArgumentException("Table with tableId ${table.id} is not free at $startBookingTime")
     }
