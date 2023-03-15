@@ -10,7 +10,8 @@ import ru.hse.group_project.nasvazi.model.entity.CodeEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
 import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
 import ru.hse.group_project.nasvazi.model.enums.UserRole
-import ru.hse.group_project.nasvazi.model.response.AuthResponse
+import ru.hse.group_project.nasvazi.model.request.LoginAuthRequest
+import ru.hse.group_project.nasvazi.model.response.LoginAuthResponse
 import ru.hse.group_project.nasvazi.repository.UserRepository
 
 private const val ACCOUNT_SID = "AC099936283bbaf1f451cf198df29c2339"
@@ -29,22 +30,29 @@ class UserService(
         return userRepository.getByPhone(phone) ?: createUser(phone = phone, name = name)
     }
 
-    fun login(phone: String, expectedRole: UserRole): AuthResponse {
+    fun login(
+        request: LoginAuthRequest
+    ): LoginAuthResponse {
+        val phone = request.phone
+        val expectedRole = request.expectedRole
+        val name = request.name
+        val chatId = request.chatId
+
         var user = userRepository.getByPhone(phone)
         // нет такого админа в бд
         if (user == null && expectedRole == UserRole.ADMIN) {
-            return AuthResponse(ResponseStatus.FAIL, null)
+            return LoginAuthResponse(ResponseStatus.FAIL, null, null)
         }
 
         // создаем обычного пользователя
         if (user == null && expectedRole == UserRole.USER) {
-            user = createUser(phone, "LOGIN")
+            user = createUser(phone = phone, name = name, chatId = chatId)
         }
 
         val userRoles: List<UserRole> = userRepository.getRoles(userId = user?.id!!)
         if (expectedRole == UserRole.ADMIN && !userRoles.contains(expectedRole)) {
             // User do not have permission to do that
-            return AuthResponse(ResponseStatus.FAIL, null)
+            return LoginAuthResponse(ResponseStatus.FAIL, null, null)
         }
 
         // generate code
@@ -57,7 +65,7 @@ class UserService(
         // save code
         userRepository.createCode(codeEntity)
 
-        return AuthResponse(ResponseStatus.SUCCESS, code.toLong())
+        return LoginAuthResponse(ResponseStatus.SUCCESS, code.toLong(), userId = user.id)
     }
 
     fun testTwilio() {
@@ -72,8 +80,9 @@ class UserService(
     private fun createUser(
         name: String,
         phone: String,
+        chatId: Long = 0
     ): UserEntity {
-        val userEntity = UserEntity(phone = phone, name = name)
+        val userEntity = UserEntity(phone = phone, name = name, chatId = chatId)
         val user = userRepository.create(userEntity)
         // add role_ref
         userRepository.createRole(user.id!!, UserRole.USER)

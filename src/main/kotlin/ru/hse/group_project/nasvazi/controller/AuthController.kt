@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
-import ru.hse.group_project.nasvazi.model.request.AuthRequest
+import ru.hse.group_project.nasvazi.model.request.LoginAuthRequest
 import ru.hse.group_project.nasvazi.model.request.ConfirmPhoneAuthRequest
-import ru.hse.group_project.nasvazi.model.response.AuthResponse
+import ru.hse.group_project.nasvazi.model.response.LoginAuthResponse
 import ru.hse.group_project.nasvazi.model.response.SimpleResponse
 import ru.hse.group_project.nasvazi.service.UserService
 
@@ -33,9 +33,9 @@ class AuthController(
      */
     @PostMapping(value = ["/login"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun login(
-        @RequestBody request: AuthRequest
-    ): AuthResponse {
-       return userService.login(request.phone, request.expectedRole)
+        @RequestBody request: LoginAuthRequest
+    ): LoginAuthResponse {
+       return userService.login(request)
     }
 
     // проверка проверочного номера
