@@ -1,6 +1,7 @@
 package ru.hse.group_project.nasvazi.service
 
 import org.springframework.stereotype.Service
+import ru.hse.group_project.nasvazi.model.dto.AnalysisBookingDto
 import ru.hse.group_project.nasvazi.model.dto.BookingDto
 import ru.hse.group_project.nasvazi.model.entity.BookingEntity
 import ru.hse.group_project.nasvazi.model.entity.TableEntity
@@ -21,6 +22,9 @@ class BookingService(
     private val userService: UserService,
     private val tableService: TableService,
 ) {
+    fun aggregate(startDate: LocalDate, endDate: LocalDate): List<AnalysisBookingDto> {
+        return bookingRepository.aggregate(startDate, endDate)
+    }
 
     fun book(request: CreateBookingRequest): CreateBookingResponse {
         // user

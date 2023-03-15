@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
+import ru.hse.group_project.nasvazi.model.dto.AnalysisBookingDto
 import ru.hse.group_project.nasvazi.model.entity.BookingEntity
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
 import java.time.LocalDate
@@ -89,6 +90,14 @@ class BookingRepository(
         return jdbcTemplate.query(SELECT_IN_TIME_RANGE, params, bookingRowMapper)
     }
 
+    fun aggregate(startDate: LocalDate, endDate: LocalDate): List<AnalysisBookingDto> {
+        val params = mapOf(
+            "startDate" to startDate,
+            "endDate" to endDate,
+        )
+        return jdbcTemplate.query(AGGREGATE_BOOKING_BY_DATE, params, analysisBookingDtoRowMapper)
+    }
+
     private val bookingRowMapper = RowMapper { rs, _ ->
         BookingEntity(
             id = rs.getLong("id"),
@@ -98,6 +107,16 @@ class BookingRepository(
             participants = rs.getLong("participants"),
             status = BookingStatus.valueOf(rs.getString("status")),
             comment = rs.getString("comment")
+        )
+    }
+
+    private val analysisBookingDtoRowMapper = RowMapper { rs, _ ->
+        AnalysisBookingDto(
+            date = rs.getTimestamp("date_").toLocalDateTime().toLocalDate(),
+            cancelled = rs.getLong("cancelled_bookings"),
+            confirmed = rs.getLong("confirmed_bookings"),
+            total = rs.getLong("total_bookings"),
+            confirmedGuests = rs.getLong("confirmed_users")
         )
     }
 }
@@ -145,3 +164,15 @@ where table_id = :tableId
   and time_from >=:startTime
    and time_from <=:endTime
 """
+const val AGGREGATE_BOOKING_BY_DATE = """
+select time_from::date                                           as date_,
+       COUNT(*) FILTER (where b.status = 'CONFIRMED')            as confirmed_bookings,
+       COUNT(*) FILTER (where b.status = 'CANCELLED')            as cancelled_bookings,
+       COUNT(*)                                                  as total_bookings,
+       sum(b.participants) FILTER (where b.status = 'CONFIRMED') as confirmed_users
+
+from booking b
+where time_from::date >= :startDate
+  and time_from::date <= :endDate
+group by date_
+;"""

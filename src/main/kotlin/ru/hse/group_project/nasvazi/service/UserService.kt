@@ -1,8 +1,5 @@
 package ru.hse.group_project.nasvazi.service
 
-import com.twilio.Twilio
-import com.twilio.rest.api.v2010.account.Message
-import com.twilio.type.PhoneNumber
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.hse.group_project.nasvazi.model.dto.UserDto
@@ -13,9 +10,10 @@ import ru.hse.group_project.nasvazi.model.enums.UserRole
 import ru.hse.group_project.nasvazi.model.request.LoginAuthRequest
 import ru.hse.group_project.nasvazi.model.response.LoginAuthResponse
 import ru.hse.group_project.nasvazi.repository.UserRepository
-
-private const val ACCOUNT_SID = "AC099936283bbaf1f451cf198df29c2339"
-private const val AUTH_TOKEN = "c57fe3176ded45c4daecfb45e8b53180"
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 
 /**
  * Сервис пользователя
@@ -23,6 +21,7 @@ private const val AUTH_TOKEN = "c57fe3176ded45c4daecfb45e8b53180"
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val httpClient: HttpClient,
 ) {
 
     @Transactional
@@ -56,6 +55,14 @@ class UserService(
         }
 
         // generate code
+        val code = generateAndSaveCode(user).toLong()
+
+        // sendSms(code = code, phone = phone)
+
+        return LoginAuthResponse(ResponseStatus.SUCCESS, code, userId = user.id)
+    }
+
+    private fun generateAndSaveCode(user: UserEntity): Int {
         val code = (1000..9999).random()
 
         val codeEntity = CodeEntity(
@@ -64,17 +71,28 @@ class UserService(
         )
         // save code
         userRepository.createCode(codeEntity)
-
-        return LoginAuthResponse(ResponseStatus.SUCCESS, code.toLong(), userId = user.id)
+        return code
     }
 
-    fun testTwilio() {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
-        val message: Message = Message.creator(
-            PhoneNumber("+79169775431"),
-            PhoneNumber("+79169775431"),
-            "keks"
-        ).create()
+    private val LOGIN = "katejud"
+    private val PASSWORD = "28074802759"
+    private val MEASSAGE_TEMPLATE = "code"//"Your%20NASVAZI%20verification%20code:%20"
+    private val SMS_URI = "http://api.smsfeedback.ru/messages/v2/send/"
+
+    private fun sendSms(phone: String, code: Long) {
+        // todo if флаг()
+        val message = MEASSAGE_TEMPLATE + code
+        //http://api.smsfeedback.ru/messages/v2/send/?login=katejud&password=28074802759&phone=79169775431&text=test
+        val formattedPhone = phone.replace("-", "").replace(" ", "").replace("+", "")
+        // Номер начиная без знака +
+        val uri = "$SMS_URI?login=$LOGIN&password=$PASSWORD&phone=$formattedPhone&text=$message"
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create(uri))
+            .GET()
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .build()
+        val kek = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        println(kek)
     }
 
     private fun createUser(

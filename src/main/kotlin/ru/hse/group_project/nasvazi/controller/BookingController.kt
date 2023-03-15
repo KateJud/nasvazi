@@ -15,6 +15,7 @@ import ru.hse.group_project.nasvazi.model.request.CancelBookingRequest
 import ru.hse.group_project.nasvazi.model.request.ConfirmBookingRequest
 import ru.hse.group_project.nasvazi.model.request.CreateBookingRequest
 import ru.hse.group_project.nasvazi.model.response.ActiveBookingResponse
+import ru.hse.group_project.nasvazi.model.response.AggregateByDateResponse
 import ru.hse.group_project.nasvazi.model.response.CreateBookingResponse
 import ru.hse.group_project.nasvazi.model.response.SimpleResponse
 import ru.hse.group_project.nasvazi.service.BookingService
@@ -35,6 +36,14 @@ class BookingController(private val bookingService: BookingService) {
         @RequestBody request: CreateBookingRequest
     ): CreateBookingResponse {
         return bookingService.book(request)
+    }
+
+    @GetMapping(value = ["/aggregate-by-date"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun aggregateByDate(
+        @RequestParam("startDate") startDate: LocalDate,
+        @RequestParam("endDate") endDate: LocalDate,
+    ): AggregateByDateResponse {
+        return AggregateByDateResponse(bookingService.aggregate(startDate, endDate))
     }
 
     @PostMapping(value = ["/cancel"], produces = [MediaType.APPLICATION_JSON_VALUE])
