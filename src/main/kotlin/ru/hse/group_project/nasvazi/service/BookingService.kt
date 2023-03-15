@@ -22,13 +22,14 @@ class BookingService(
     private val tableService: TableService,
 ) {
 
-    private val BOOKING_TIME = 2L
-
     fun book(request: CreateBookingRequest): CreateBookingResponse {
-
         // user
-        // get Or create user by phoneId
-        val user = userService.getOrCreate(request.phone, request.name)
+        val user = if (request.userId != null) {
+            userService.getById(request.userId)
+        } else {
+            // get Or create user by phoneId
+            userService.getOrCreate(request.phone!!, request.name!!)
+        }
 
         // table  - search by name
         val table = tableService.get(request.tableName)
@@ -49,9 +50,11 @@ class BookingService(
     }
 
     private fun checkTableIsAvailableAtTime(table: TableEntity, startBookingTime: LocalDateTime) {
-        if (bookingRepository.getByTimeRange(table.id!!,
+        if (bookingRepository.getByTimeRange(
+                table.id!!,
                 startBookingTime.minusHours(1),
-                startBookingTime.plusHours(1))
+                startBookingTime.plusHours(1)
+            )
                 .isNotEmpty()
         )
             throw IllegalArgumentException("Table with tableId ${table.id} is not free at $startBookingTime")
