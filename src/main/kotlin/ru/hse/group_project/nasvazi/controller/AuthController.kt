@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
 import ru.hse.group_project.nasvazi.model.request.ConfirmPhoneAuthRequest
 import ru.hse.group_project.nasvazi.model.request.LoginAuthRequest
 import ru.hse.group_project.nasvazi.model.response.LoginAuthResponse
@@ -38,12 +37,10 @@ class AuthController(
     }
 
     // проверка проверочного номера
-    // выдача jwt
     @PostMapping(value = ["/confirm-number"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun confirm(
         @RequestBody request: ConfirmPhoneAuthRequest
     ): SimpleResponse {
-        // Приходит телефон -- если админ, -- ок; смс -- ок -> jwt
-        return SimpleResponse(ResponseStatus.SUCCESS)
+        return SimpleResponse(userService.checkSms(request.userId, request.code))
     }
 }

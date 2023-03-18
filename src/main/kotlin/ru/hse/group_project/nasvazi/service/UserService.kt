@@ -1,10 +1,12 @@
 package ru.hse.group_project.nasvazi.service
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.hse.group_project.nasvazi.model.dto.UserDto
 import ru.hse.group_project.nasvazi.model.entity.CodeEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
+import ru.hse.group_project.nasvazi.model.enums.NsqlConfigKey
 import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
 import ru.hse.group_project.nasvazi.model.enums.UserRole
 import ru.hse.group_project.nasvazi.model.request.LoginAuthRequest
@@ -22,7 +24,13 @@ import java.net.http.HttpResponse
 class UserService(
     private val userRepository: UserRepository,
     private val httpClient: HttpClient,
+    private val systemPropertyService: SystemPropertyService,
+    @Value("\${sms.password}") private val smsPassword: String,
+    @Value("\${sms.uri}") private val smsUri: String,
+    @Value("\${sms.login}") private val smsLogin: String,
 ) {
+
+    private val MEASSAGE_TEMPLATE = "code"
 
     @Transactional
     fun getOrCreate(phone: String, name: String): UserEntity {
@@ -57,9 +65,23 @@ class UserService(
         // generate code
         val code = generateAndSaveCode(user).toLong()
 
-        // sendSms(code = code, phone = phone)
+        sendSms(code = code, phone = phone)
 
         return LoginAuthResponse(ResponseStatus.SUCCESS, code, userId = user.id)
+    }
+
+    fun checkSms(userId: Long, code: Long): ResponseStatus {
+        return if (isSmsEnabled()) {
+            checkSmsCode(userId, code)
+        } else {
+            ResponseStatus.SUCCESS
+        }
+    }
+
+    private fun checkSmsCode(userId: Long, code: Long): ResponseStatus {
+        return if (userRepository.checkCodeAndUser(userId, code))
+            ResponseStatus.SUCCESS
+        else ResponseStatus.FAIL
     }
 
     private fun generateAndSaveCode(user: UserEntity): Int {
@@ -74,26 +96,22 @@ class UserService(
         return code
     }
 
-    private val LOGIN = "katejud"
-    private val PASSWORD = "28074802759"
-    private val MEASSAGE_TEMPLATE = "code"//"Your%20NASVAZI%20verification%20code:%20"
-    private val SMS_URI = "http://api.smsfeedback.ru/messages/v2/send/"
-
     private fun sendSms(phone: String, code: Long) {
-        // todo if флаг()
-        val message = MEASSAGE_TEMPLATE + code
-        //http://api.smsfeedback.ru/messages/v2/send/?login=katejud&password=28074802759&phone=79169775431&text=test
-        val formattedPhone = phone.replace("-", "").replace(" ", "").replace("+", "")
-        // Номер начиная без знака +
-        val uri = "$SMS_URI?login=$LOGIN&password=$PASSWORD&phone=$formattedPhone&text=$message"
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(uri))
-            .GET()
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .build()
-        val kek = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
-        println(kek)
+        if (isSmsEnabled()) {
+            val message = MEASSAGE_TEMPLATE + code
+            val formattedPhone = phone.replace("-", "").replace(" ", "").replace("+", "")
+            // Номер начиная без знака +
+            val uri = "$smsUri?login=$smsLogin&password=$smsPassword&phone=$formattedPhone&text=$message"
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(uri))
+                .GET()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .build()
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        }
     }
+
+    private fun isSmsEnabled() = systemPropertyService.getConfigAsBoolean(NsqlConfigKey.ENABLE_SMS)
 
     private fun createUser(
         name: String,

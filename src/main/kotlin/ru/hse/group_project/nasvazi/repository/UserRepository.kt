@@ -84,6 +84,14 @@ class UserRepository(
         jdbcTemplate.update(INSERT_USER_CODE, params)
     }
 
+    fun checkCodeAndUser(userId: Long,code: Long):Boolean {
+        val params = mapOf(
+            "userId" to userId,
+            "code" to code,
+        )
+      return  jdbcTemplate.query(GET_USER_CODE, params, userCodeMapper ).isNotEmpty()
+    }
+
     private val userRowMapper = RowMapper { rs, _ ->
         UserEntity(
             id = rs.getLong("id"),
@@ -112,6 +120,13 @@ class UserRepository(
             name = UserRole.valueOf(rs.getString("name")),
         )
     }
+
+    private val userCodeMapper = RowMapper { rs, _ ->
+        CodeEntity(
+            userId = rs.getLong("user_id"),
+            code = rs.getLong("code")
+        )
+    }
 }
 
 private const val SELECT_USER_BY_PHONE = """
@@ -134,6 +149,13 @@ where u.id = :id
 private const val INSERT_USER_CODE = """
 insert into user_code (user_id, code)
 VALUES (:userId, :code);
+"""
+
+private const val GET_USER_CODE = """
+select * from user_code
+where user_id=:userId
+and code=:code
+;
 """
 
 private const val SELECT_USER_BY_ID = """
