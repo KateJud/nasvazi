@@ -120,7 +120,11 @@ class BookingRepository(
             cancelled = rs.getLong("cancelled_bookings"),
             confirmed = rs.getLong("confirmed_bookings"),
             total = rs.getLong("total_bookings"),
-            confirmedGuests = rs.getLong("confirmed_users")
+            confirmedGuests = rs.getLong("confirmed_users"),
+            webQty = rs.getLong("web_qty"),
+            tgQty = rs.getLong("tg_qty"),
+            androidQty = rs.getLong("android_qty"),
+            unknownPlatformQty = rs.getLong("unknown_qty")
         )
     }
 }
@@ -168,15 +172,20 @@ where table_id = :tableId
   and time_from >=:startTime
    and time_from <=:endTime
 """
+
 const val AGGREGATE_BOOKING_BY_DATE = """
 select time_from::date                                           as date_,
        COUNT(*) FILTER (where b.status = 'CONFIRMED')            as confirmed_bookings,
        COUNT(*) FILTER (where b.status = 'CANCELLED')            as cancelled_bookings,
        COUNT(*)                                                  as total_bookings,
-       sum(b.participants) FILTER (where b.status = 'CONFIRMED') as confirmed_users
+       sum(b.participants) FILTER (where b.status = 'CONFIRMED') as confirmed_users,
+       COUNT(*) FILTER (where b.platform = 'WEB')                as web_qty,
+       COUNT(*) FILTER (where b.platform = 'TG')                 as tg_qty,
+       COUNT(*) FILTER (where b.platform = 'UNKNOWN')            as unknown_qty,
+       COUNT(*) FILTER (where b.platform = 'ANDROID')            as android_qty
 
 from booking b
 where time_from::date >= :startDate
   and time_from::date <= :endDate
-group by date_
+group by date_;
 ;"""

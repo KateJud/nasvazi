@@ -8,4 +8,8 @@ data class AnalysisBookingDto(
     val confirmed: Long,
     val total: Long,
     val confirmedGuests: Long,
+    val webQty: Long,
+    val tgQty: Long,
+    val androidQty: Long,
+    val unknownPlatformQty: Long,
 )
