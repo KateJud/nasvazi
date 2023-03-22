@@ -187,5 +187,6 @@ select time_from::date                                           as date_,
 from booking b
 where time_from::date >= :startDate
   and time_from::date <= :endDate
-group by date_;
+group by date_
+order by date_ desc
 ;"""

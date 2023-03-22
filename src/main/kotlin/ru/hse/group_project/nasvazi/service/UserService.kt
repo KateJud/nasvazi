@@ -4,18 +4,22 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.hse.group_project.nasvazi.model.dto.UserDto
+import ru.hse.group_project.nasvazi.model.entity.BonusTrnEntity
 import ru.hse.group_project.nasvazi.model.entity.CodeEntity
 import ru.hse.group_project.nasvazi.model.entity.UserEntity
 import ru.hse.group_project.nasvazi.model.enums.NsqlConfigKey
 import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
+import ru.hse.group_project.nasvazi.model.enums.TrnType
 import ru.hse.group_project.nasvazi.model.enums.UserRole
 import ru.hse.group_project.nasvazi.model.request.LoginAuthRequest
 import ru.hse.group_project.nasvazi.model.response.LoginAuthResponse
+import ru.hse.group_project.nasvazi.repository.BonusRepository
 import ru.hse.group_project.nasvazi.repository.UserRepository
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.time.LocalDateTime
 
 /**
  * Сервис пользователя
@@ -25,6 +29,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val httpClient: HttpClient,
     private val systemPropertyService: SystemPropertyService,
+    private val bonusRepository: BonusRepository,
     @Value("\${sms.password}") private val smsPassword: String,
     @Value("\${sms.uri}") private val smsUri: String,
     @Value("\${sms.login}") private val smsLogin: String,
@@ -133,9 +138,15 @@ class UserService(
         return userRepository.getAll()
     }
 
-    fun addBonus(id: Long, bonus: Long) {
-        validateCanReduce(userId = id, bonus = bonus)
-        userRepository.addBonus(bonus = bonus, userId = id)
+    fun addBonus(userId: Long, bonus: Long, type:TrnType) {
+        validateCanReduce(userId = userId, bonus = bonus)
+        userRepository.addBonus(bonus = bonus, userId = userId)
+        bonusRepository.insert(BonusTrnEntity(
+            userId = userId,
+            qty = bonus,
+            type = type,
+            dateWhen = LocalDateTime.now()
+        ))
     }
 
     private fun validateCanReduce(userId: Long, bonus: Long) {

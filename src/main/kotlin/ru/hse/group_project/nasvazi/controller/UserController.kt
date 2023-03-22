@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import ru.hse.group_project.nasvazi.model.enums.ResponseStatus
+import ru.hse.group_project.nasvazi.model.enums.TrnType
 import ru.hse.group_project.nasvazi.model.request.AddBonusRequest
 import ru.hse.group_project.nasvazi.model.response.GetAllUsersResponse
 import ru.hse.group_project.nasvazi.model.response.SimpleResponse
@@ -31,14 +32,14 @@ class UserController(private val userService: UserService) {
     @Operation(summary = "Накапливает n балов пользователю")
     @PostMapping("/add-bonus")
     fun addBonus(@RequestBody request: AddBonusRequest): SimpleResponse {
-        userService.addBonus(id = request.userId, bonus = request.bonus)
+        userService.addBonus(userId = request.userId, bonus = request.bonus, TrnType.ADD)
         return SimpleResponse(ResponseStatus.SUCCESS)
     }
 
     @Operation(summary = "Снимает n баллов с пользователя")
     @PostMapping("/reduce-bonus")
     fun reduceBonus(@RequestBody request: AddBonusRequest): SimpleResponse {
-        userService.addBonus(id = request.userId, bonus = -request.bonus)
+        userService.addBonus(userId = request.userId, bonus = -request.bonus, TrnType.REDUCE)
         return SimpleResponse(ResponseStatus.SUCCESS)
     }
 }
