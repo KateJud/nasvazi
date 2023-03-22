@@ -1,5 +1,6 @@
 package ru.hse.group_project.nasvazi.model.request
 
+import ru.hse.group_project.nasvazi.model.enums.PlatformType
 import java.time.LocalDateTime
 
 data class CreateBookingRequest(
@@ -9,6 +10,8 @@ data class CreateBookingRequest(
     val participants: Long,
     val tableName: String,
     val timeFrom: LocalDateTime,
-    val comment: String?
-) :
+    val comment: String?,
+    val platform: PlatformType = PlatformType.UNKNOWN,
+
+    ) :
     NasvaziRequest

@@ -1,6 +1,7 @@
 package ru.hse.group_project.nasvazi.model.entity
 
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
+import ru.hse.group_project.nasvazi.model.enums.PlatformType
 import java.time.LocalDateTime
 
 data class BookingEntity
@@ -16,5 +17,6 @@ data class BookingEntity
     val participants: Long = 1L,
     // @Column(name = "status")
     val status: BookingStatus = BookingStatus.CREATED,
-    val comment: String?
+    val comment: String?,
+    val platform:PlatformType,
 )

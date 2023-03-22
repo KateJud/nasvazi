@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository
 import ru.hse.group_project.nasvazi.model.dto.AnalysisBookingDto
 import ru.hse.group_project.nasvazi.model.entity.BookingEntity
 import ru.hse.group_project.nasvazi.model.enums.BookingStatus
+import ru.hse.group_project.nasvazi.model.enums.PlatformType
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.sql.DataSource
@@ -24,7 +25,8 @@ class BookingRepository(
             "time_from",
             "participants",
             "status",
-            "comment"
+            "comment",
+            "platform",
         ).usingGeneratedKeyColumns("id")
 
     fun insert(booking: BookingEntity): Long {
@@ -34,7 +36,8 @@ class BookingRepository(
             "time_from" to booking.timeFrom,
             "participants" to booking.participants,
             "status" to booking.status.name,
-            "comment" to booking.comment
+            "comment" to booking.comment,
+            "platform" to booking.platform.name,
         )
         val id = bookingJdbcInsert.executeAndReturnKey(params)
         return id.toLong()
@@ -106,7 +109,8 @@ class BookingRepository(
             timeFrom = rs.getTimestamp("time_from").toLocalDateTime(),
             participants = rs.getLong("participants"),
             status = BookingStatus.valueOf(rs.getString("status")),
-            comment = rs.getString("comment")
+            comment = rs.getString("comment"),
+            platform = PlatformType.valueOf(rs.getString("platform")),
         )
     }
 

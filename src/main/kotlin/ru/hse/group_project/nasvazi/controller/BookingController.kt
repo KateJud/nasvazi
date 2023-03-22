@@ -31,6 +31,7 @@ import java.time.LocalDateTime
 @CrossOrigin
 class BookingController(private val bookingService: BookingService) {
 
+    @Operation(summary = "Создание брони. Передаем источник откуда бронь.")
     @PostMapping(value = ["/create"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun book(
         @RequestBody request: CreateBookingRequest

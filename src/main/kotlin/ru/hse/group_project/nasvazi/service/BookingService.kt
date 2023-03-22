@@ -47,6 +47,7 @@ class BookingService(
             timeFrom = request.timeFrom,
             participants = request.participants,
             comment = request.comment,
+            platform = request.platform
         )
 
         val bookingId = bookingRepository.insert(booking)
