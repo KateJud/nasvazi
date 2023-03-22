@@ -3,6 +3,7 @@ package ru.hse.group_project.nasvazi.service
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import ru.hse.group_project.nasvazi.model.dto.AnalysisBonusDto
 import ru.hse.group_project.nasvazi.model.dto.UserDto
 import ru.hse.group_project.nasvazi.model.entity.BonusTrnEntity
 import ru.hse.group_project.nasvazi.model.entity.CodeEntity
@@ -138,20 +139,26 @@ class UserService(
         return userRepository.getAll()
     }
 
-    fun addBonus(userId: Long, bonus: Long, type:TrnType) {
+    fun addBonus(userId: Long, bonus: Long, type: TrnType) {
         validateCanReduce(userId = userId, bonus = bonus)
         userRepository.addBonus(bonus = bonus, userId = userId)
-        bonusRepository.insert(BonusTrnEntity(
-            userId = userId,
-            qty = bonus,
-            type = type,
-            dateWhen = LocalDateTime.now()
-        ))
+        bonusRepository.insert(
+            BonusTrnEntity(
+                userId = userId,
+                qty = bonus,
+                type = type,
+                timeWhen = LocalDateTime.now()
+            )
+        )
     }
 
     private fun validateCanReduce(userId: Long, bonus: Long) {
         val balance = userRepository.getById(userId).bonus
         if (userRepository.getById(userId).bonus + bonus < 0)
             throw IllegalArgumentException("Can not reduce $bonus bonuses because current balance is $balance ")
+    }
+
+    fun aggregate(): List<AnalysisBonusDto> {
+        return bonusRepository.aggregate()
     }
 }

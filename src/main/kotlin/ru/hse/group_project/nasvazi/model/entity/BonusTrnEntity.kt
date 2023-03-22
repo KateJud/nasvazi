@@ -7,5 +7,5 @@ data class BonusTrnEntity(
     val userId: Long,
     val qty: Long,
     val type: TrnType,
-    val dateWhen: LocalDateTime,
+    val timeWhen: LocalDateTime,
 )

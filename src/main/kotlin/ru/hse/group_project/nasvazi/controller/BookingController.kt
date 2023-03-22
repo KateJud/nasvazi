@@ -39,7 +39,7 @@ class BookingController(private val bookingService: BookingService) {
         return bookingService.book(request)
     }
 
-    @Operation(summary = "Для аналитики. Агрегация заданий по дате, а внутри по стаусам, по платформе  ")
+    @Operation(summary = "Для аналитики. [ADMIN CONTROLLER] Агрегация заданий по дате, а внутри по стаусам, по платформе  ")
     @GetMapping(value = ["/aggregate-by-date"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun aggregateByDate(
         @RequestParam("startDate") startDate: LocalDate,
