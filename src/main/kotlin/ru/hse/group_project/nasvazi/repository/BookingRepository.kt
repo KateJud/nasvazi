@@ -48,7 +48,7 @@ class BookingRepository(
         jdbcTemplate.update(UPDATE_STATUS_BY_ID, params)
     }
 
-    fun getUnavailableBookingByDate(date: String): List<BookingEntity> {
+    fun getUnavailableBookingByDate(date: LocalDate): List<BookingEntity> {
         val params = mapOf(
             "date" to date,
             "status" to BookingStatus.CANCELLED.name,
@@ -130,7 +130,7 @@ where b.id = :id
 const val SELECT_BOOKING_BY_DATE_AND_STATUS = """
 select *
 from booking
-where to_date(time_from,'dd-MM-yyyy') = :date
+where  to_date(time_from::text,'yyyy-MM-dd') = :date
 and status != :status
 """
 

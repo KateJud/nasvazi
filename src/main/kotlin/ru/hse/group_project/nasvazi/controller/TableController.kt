@@ -4,15 +4,15 @@ import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import ru.hse.group_project.nasvazi.model.request.GetAvailableTableById
 import ru.hse.group_project.nasvazi.model.request.GetAvailableTablesRequest
 import ru.hse.group_project.nasvazi.model.response.GetAllTablesResponse
 import ru.hse.group_project.nasvazi.model.response.GetAvailableTablesResponse
 import ru.hse.group_project.nasvazi.model.response.GetUnavailableTablesResponse
 import ru.hse.group_project.nasvazi.service.TableService
+import java.time.LocalDate
 
 @RequestMapping("/table")
 @RestController
@@ -25,16 +25,26 @@ class TableController(
         return GetUnavailableTablesResponse(tableService.getUnavailable(request.date))
     }
 
-    @Operation(summary = "Получает инфу по свободным столикам по дате и количеству человек")
+    @Operation(summary = "Выдает инфу по свободным столикам по дате и количеству человек")
     @PostMapping("/available")
-    fun getAvailableTables(@RequestBody request: GetAvailableTablesRequest): GetAvailableTablesResponse {
-        return GetAvailableTablesResponse(tableService.getAvailable(request.date, capacity = request.capacity))
+    fun getAvailableTables(
+        @RequestParam("date") date: LocalDate,
+        @RequestParam("capacity") capacity: Long
+    ): GetAvailableTablesResponse {
+        return GetAvailableTablesResponse(
+            tableService.getAvailable(
+                date, capacity = capacity
+            )
+        )
     }
 
-    @Operation(summary = "Получает инфу по свободному времени для столика")
+    @Operation(summary = "Выдает инфу по свободному времени для столика")
     @PostMapping("/available-by-table")
-    fun getAvailableTableById(@RequestBody request: GetAvailableTableById): GetAvailableTablesResponse {
-        return GetAvailableTablesResponse(tableService.getAvailableById(request.date, tableId = request.tableId))
+    fun getAvailableTableById(
+        @RequestParam("date") date: LocalDate,
+        @RequestParam("tableId") tableId: Long
+    ): GetAvailableTablesResponse {
+        return GetAvailableTablesResponse(tableService.getAvailableById(date, tableId = tableId))
     }
 
     @Operation(summary = "Возвращает информацию о всех столах в заведении")

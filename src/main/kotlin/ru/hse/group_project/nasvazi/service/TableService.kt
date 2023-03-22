@@ -44,7 +44,7 @@ class TableService(
         // Получаем столики
         val tables = tableRepository.getByCapacity(capacity)
         // Получаем заброненные времена
-        val tableToBookings = bookingRepository.getUnavailableBookingByDate(date.toString()).groupBy { it.tableId }
+        val tableToBookings = bookingRepository.getUnavailableBookingByDate(date).groupBy { it.tableId }
         // get UnavailableBooking date
         val res = tables.map { table ->
 
@@ -82,7 +82,7 @@ class TableService(
         tables: List<TableEntity>
     ): List<AvailableTableDto> {
         // Получаем заброненные времена
-        val tableToBookings = bookingRepository.getUnavailableBookingByDate(date.toString()).groupBy { it.tableId }
+        val tableToBookings = bookingRepository.getUnavailableBookingByDate(date).groupBy { it.tableId }
         // get UnavailableBooking date
         val res = tables.map { table ->
 
@@ -111,7 +111,7 @@ class TableService(
     // беру дату на выходе полная инфа по всем столикам за день
     fun getUnavailable(date: LocalDate): List<UnavailableTableDto> {
         // Получаем заброненные времена
-        val bookings = bookingRepository.getUnavailableBookingByDate(date.toString())
+        val bookings = bookingRepository.getUnavailableBookingByDate(date)
         val res = bookings.groupBy { it.tableId }.map { (tableId, bookings) ->
             convert(tableId, bookings)
         }

@@ -54,6 +54,7 @@ class BookingController(private val bookingService: BookingService) {
         return SimpleResponse(ResponseStatus.SUCCESS)
     }
 
+    @Operation(summary = "Подтверждает бронь")
     @PostMapping(value = ["/confirm"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun confirm(
         @RequestBody request: ConfirmBookingRequest
