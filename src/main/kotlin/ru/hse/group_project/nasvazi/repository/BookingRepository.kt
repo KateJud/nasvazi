@@ -188,5 +188,5 @@ from booking b
 where time_from::date >= :startDate
   and time_from::date <= :endDate
 group by date_
-order by date_ desc
+order by date_
 ;"""
