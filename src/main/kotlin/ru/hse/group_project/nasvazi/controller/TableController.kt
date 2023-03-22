@@ -26,7 +26,7 @@ class TableController(
     }
 
     @Operation(summary = "Выдает инфу по свободным столикам по дате и количеству человек")
-    @PostMapping("/available")
+    @GetMapping("/available")
     fun getAvailableTables(
         @RequestParam("date") date: LocalDate,
         @RequestParam("capacity") capacity: Long
@@ -39,7 +39,7 @@ class TableController(
     }
 
     @Operation(summary = "Выдает инфу по свободному времени для столика")
-    @PostMapping("/available-by-table")
+    @GetMapping("/available-by-table")
     fun getAvailableTableById(
         @RequestParam("date") date: LocalDate,
         @RequestParam("tableId") tableId: Long
